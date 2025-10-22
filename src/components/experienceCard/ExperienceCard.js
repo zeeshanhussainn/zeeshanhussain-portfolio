@@ -1,14 +1,16 @@
-import React, {useState, createRef} from "react";
+import React, { useState, createRef } from "react";
 import "./ExperienceCard.scss";
 import ColorThief from "colorthief";
 
-export default function ExperienceCard({cardInfo, isDark}) {
+export default function ExperienceCard({ cardInfo, isDark }) {
   const [colorArrays, setColorArrays] = useState([]);
   const imgRef = createRef();
 
   function getColorArrays() {
     const colorThief = new ColorThief();
-    setColorArrays(colorThief.getColor(imgRef.current));
+    if (imgRef.current && imgRef.current.complete) {
+      setColorArrays(colorThief.getColor(imgRef.current));
+    }
   }
 
   function rgb(values) {
@@ -17,7 +19,7 @@ export default function ExperienceCard({cardInfo, isDark}) {
       : "rgb(" + values.join(", ") + ")";
   }
 
-  const GetDescBullets = ({descBullets, isDark}) => {
+  const GetDescBullets = ({ descBullets, isDark }) => {
     return descBullets
       ? descBullets.map((item, i) => (
           <li
@@ -32,21 +34,23 @@ export default function ExperienceCard({cardInfo, isDark}) {
 
   return (
     <div className={isDark ? "experience-card-dark" : "experience-card"}>
-      <div style={{background: rgb(colorArrays)}} className="experience-banner">
+      <div style={{ background: rgb(colorArrays) }} className="experience-banner">
         <div className="experience-blurred_div"></div>
         <div className="experience-div-company">
           <h5 className="experience-text-company">{cardInfo.company}</h5>
         </div>
 
+        {/* Logo shown as-is, not rounded */}
         <img
-          crossOrigin={"anonymous"}
+          crossOrigin="anonymous"
           ref={imgRef}
-          className="experience-roundedimg"
+          className="experience-logo-img"
           src={cardInfo.companylogo}
           alt={cardInfo.company}
           onLoad={() => getColorArrays()}
         />
       </div>
+
       <div className="experience-text-details">
         <h5
           className={
